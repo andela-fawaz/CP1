@@ -8,7 +8,7 @@ class TestAmity(unittest.TestCase):
     def test_add_person(self):
         original_people_count = len(Amity.people)
         response = Amity.add_person('Fawaz', 'Farid', 'Fellow', 'Y')
-        new_people_count = len(Amity.people)
+        new_people_count = len(Amity.fellows)
 
         self.assertEquals(new_people_count, original_people_count + 1)
         self.assertEquals(response, "Person Added Succesfully!")
