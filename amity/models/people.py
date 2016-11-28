@@ -1,10 +1,17 @@
 class Person(object):
-    pass
+
+    def __init__(self, name):
+        self.name = name
+
+    def get_person_details(self):
+        raise NotImplementedError("This is an abstract method")
+
+    def allocate_office(self):
+        pass
 
 
 class Staff(Person):
     pass
 
-
 class Fellow(Person):
-    pass
+    wants_livingspace = 'N'
