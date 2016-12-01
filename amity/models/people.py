@@ -14,4 +14,4 @@ class Staff(Person):
     pass
 
 class Fellow(Person):
-    wants_livingspace = 'N'
+    wants_accomodation = 'N'
