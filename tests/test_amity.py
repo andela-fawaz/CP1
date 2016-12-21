@@ -104,3 +104,13 @@ class TestAmity(unittest.TestCase):
         error_msg = self.amity.reallocate_person('Shem Ogumbe', 'Hogwarts')
 
         self.assertEqual(error_msg, "Room not found!")
+
+    def test_reallocate_person_returns_error_if_staff_allocated_livingspace(self):
+        self.amity.create_room('o', 'Occulus')
+        self.amity.add_person('Shem', 'Ogumbe', 'Staff', 'N')
+        self.amity.allocate_space(self.amity.people[-1])
+        self.amity.create_room('ls', 'Scala')
+
+        msg = self.amity.reallocate_person('Shem Ogumbe', 'Scala')
+
+        self.assertEqual(msg, "Error! Can't assign staff a livingspace.")
