@@ -71,7 +71,6 @@ def docopt_cmd(func):
 class Interactive (cmd.Cmd):
     prompt = "(amity) "
 
-    # file = None
     def __init__(self):
         cmd.Cmd.__init__(self)
         self.amity = Amity()
@@ -156,9 +155,9 @@ class Interactive (cmd.Cmd):
         print(self.amity.save_state())
 
     @docopt_cmd
-    def do_load_state(self, args):
-        """Usage: load_state <sqlite_database>"""
-        print(self.amity.load_state(args))
+    def do_load_state(self, arg):
+        """Usage: load_state"""
+        print(self.amity.load_state())
 
     def do_quit(self, arg):
         """Quits out of the interactive mode"""
@@ -172,6 +171,3 @@ if opt["--interactive"]:
     Interactive().cmdloop()
 
 print(opt)
-
-# if __name__ == '__main__':
-#     main()
