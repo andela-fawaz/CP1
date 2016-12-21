@@ -48,6 +48,14 @@ class Amity(object):
             return 'Invalid Input!'
 
     def create_room(self, room_type, *room_names):
+        """
+        Creates rooms.
+        An office is created as an instance of the Office class.
+        A living space is created as an instance of the LivingSpace class.
+
+        :param room_type - type of room(LS|O)
+        :param room_names - String rooms name(s)
+        """
         # get all rooms
         available_rooms = [x.name for x in (self.livingspaces + self.offices)]
         try:
@@ -95,7 +103,7 @@ class Amity(object):
 
         :param person - Instance of person
 
-        returns: msg - success or error message.
+        :returns msg - success or error message.
         """
         available_rooms = rooms
 
@@ -121,7 +129,16 @@ class Amity(object):
         return msg
 
     def reallocate_person(self, person, room):
-        """"""
+        """
+        Allocates someone a new room and removes him from his previous room.
+        searches for the person and room in the system.
+        makes sure Staff can't be assigned a living space.
+
+        :param person - string name of the person
+        :param room - string name of the new room.
+
+        :returns msg - success or error message.
+        """
         try:
             # get person
             person = filter(lambda x: x.name == person.upper(), self.people)[0]
@@ -133,6 +150,9 @@ class Amity(object):
             room = filter(lambda x: x.name == room.upper(), rooms)[0]
         except IndexError:
             return "Room not found!"
+
+        if isinstance(person, Staff) and isinstance(room, LivingSpace):
+            return "Error! Can't assign staff a livingspace."
 
         if person in self.unallocated and isinstance(room, Office):
             self.unallocated.remove(person)
@@ -165,7 +185,11 @@ class Amity(object):
         return results
 
     def load_people(self, file):
-        # Check if file is .txt
+        """
+        Loads people from a .txt file.
+
+        :param file - a .txt File
+        """
 
         # Open file for reading.
         with open(file, 'r') as f:
@@ -191,7 +215,28 @@ class Amity(object):
             return "Room not found!"
 
     def save_state(self):
-        session.bulk_save_objects(self.people)
-        session.bulk_save_objects(self.livingspaces)
-        session.bulk_save_objects(self.offices)
-        session.commit()
+        """
+        Saves session data in a database
+
+        :returns - success or error message.
+        """
+        try:
+            session.bulk_save_objects(self.people)
+            session.bulk_save_objects(self.livingspaces)
+            session.bulk_save_objects(self.offices)
+            session.commit()
+            return "Database State Saved Successfully!"
+        except sqlalchemy.exc.OperationalError:
+            return "Database Error!"
+
+    def load_state(self):
+        """
+        Loads from database, the data that was saved from a particular session,
+        into the system.
+
+        returns - success or error message.
+        """
+        self.people = session.query(Fellow).all() + session.query(Staff).all()
+        self.livingspaces = session.query(LivingSpace).all()
+        self.offices = session.query(Office).all()
+        return "Data Loaded Successfully!"
